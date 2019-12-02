@@ -1,0 +1,74 @@
+//server
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.Scanner;
+
+class UdpServer 
+{
+    public static void main(String[] args) 
+    {
+        Scanner ip = new Scanner(System.in);
+        try 
+        {
+            DatagramSocket ds = new DatagramSocket();
+            InetAddress ca = InetAddress.getByName("127.0.0.1");
+            String line;
+            byte[] buffer;
+            DatagramPacket dp;
+            System.out.println("Enter Messages to Send");
+            while (true) 
+            {
+                line = ip.nextLine();
+                buffer = line.getBytes();
+                dp = new DatagramPacket(buffer, buffer.length, ca, 1234);
+                ds.send(dp);
+                if (line.equalsIgnoreCase("exit")) 
+                {
+                    ds.close();
+                    break;
+                }
+            }
+        } 
+        catch (IOException e) 
+        {
+            e.printStackTrace();
+        }
+    }
+}
+//client
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+
+class UdpClient 
+{
+    public static void main(String[] args) 
+    {
+        try 
+        {
+            DatagramSocket ds = new DatagramSocket(1234);
+            byte[] buffer;
+            DatagramPacket dp;
+            System.out.println("Messages Received");
+            while (true) 
+            {
+                buffer = new byte[65535];
+                dp = new DatagramPacket(buffer, buffer.length);
+                ds.receive(dp);
+                String received = new String(buffer).trim();
+                System.out.println(received);
+                if (received.equalsIgnoreCase("exit")) 
+                {
+                    ds.close();
+                    break;
+                }
+            }
+        } 
+        catch (IOException e) 
+        {
+            e.printStackTrace();
+        }
+    }
+}
